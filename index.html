@@ -1,325 +1,49 @@
 <!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jabalpur - आपका अपना स्मार्ट सर्च इंजन</title>
-    <!-- आइकॉन्स के लिए FontAwesome -->
-    <link rel="stylesheet" href="https://cloudflare.com">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-        }
-        body {
-            background-color: #ffffff;
-            color: #202124;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        /* टॉप नेविगेशन और ट्रांसलेटर */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            font-size: 14px;
-        }
-        .header-left a {
-            text-decoration: none;
-            color: #202124;
-            margin-right: 15px;
-            font-weight: 500;
-        }
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        #google_translate_element {
-            display: inline-block;
-        }
-
-        /* मुख्य सर्च कंटेनर */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-        .logo {
-            font-size: 56px;
-            font-weight: 700;
-            letter-spacing: -2px;
-            margin-top: 30px;
-            margin-bottom: 25px;
-            user-select: none;
-            text-align: center;
-        }
-        /* Google जैसे रंग */
-        .c-blue { color: #4285F4; }
-        .c-red { color: #EA4335; }
-        .c-yellow { color: #FBBC05; }
-        .c-green { color: #34A853; }
-        .sub-logo {
-            font-size: 13px;
-            color: #5f6368;
-            letter-spacing: 1px;
-            margin-top: -15px;
-            margin-bottom: 25px;
-            font-weight: 500;
-        }
-
-        /* Google जैसा सर्च बार */
-        .search-wrapper {
-            width: 100%;
-            max-width: 620px;
-            position: relative;
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            height: 50px;
-            border: 1px solid #dfe1e5;
-            border-radius: 25px;
-            padding: 0 18px;
-            box-shadow: 0 1px 6px rgba(32,33,36,0.12);
-            transition: box-shadow 0.2s;
-            background: #fff;
-        }
-        .search-box:hover, .search-box:focus-within {
-            box-shadow: 0 2px 10px rgba(32,33,36,0.22);
-            border-color: rgba(223,225,229,0);
-        }
-        .search-box input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            padding: 0 12px;
-            color: #202124;
-            background: transparent;
-        }
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 19px;
-            padding: 8px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-        .icon-btn:hover {
-            background-color: #f1f3f4;
-        }
-        .mic-icon { color: #4285F4; }
-        .mic-active { color: #EA4335; animation: pulse 1s infinite; }
-        .cam-icon { color: #34A853; }
-        .search-icon { color: #5f6368; font-size: 17px; }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        /* क्विक कैटेगरी चिप्स (जबलपुर विशेष) */
-        .quick-chips {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            max-width: 720px;
-            margin-top: 25px;
-        }
-        .chip {
-            background-color: #f8f9fa;
-            border: 1px solid #dadce0;
-            border-radius: 20px;
-            padding: 8px 16px;
-            font-size: 13.5px;
-            color: #3c4043;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .chip:hover {
-            background-color: #e8f0fe;
-            border-color: #4285F4;
-            color: #1967d2;
-        }
-
-        /* रिजल्ट दिखाने का एरिया */
-        #results-container {
-            width: 100%;
-            max-width: 720px;
-            margin-top: 30px;
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .result-card {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-        .result-card h3 {
-            color: #1a0dab;
-            font-size: 19px;
-            margin-bottom: 8px;
-        }
-        .result-card p {
-            color: #4d5156;
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-        .card-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .map-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background-color: #e8f0fe;
-            color: #1967d2;
-            text-decoration: none;
-            padding: 7px 14px;
-            border-radius: 18px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .map-btn:hover {
-            background-color: #d2e3fc;
-        }
-        .uploaded-preview {
-            max-width: 180px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 2px solid #4285F4;
-        }
-
-        /* फुटर */
-        footer {
-            background-color: #f2f2f2;
-            color: #70757a;
-            padding: 15px 25px;
-            font-size: 14px;
-            border-top: 1px solid #dadce0;
-            margin-top: 40px;
-        }
-        .footer-top {
-            padding-bottom: 10px;
-            border-bottom: 1px solid #dadce0;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- हेडर और भाषा अनुवाद (Translate) -->
-    <header>
-        <div class="header-left">
-            <a href="#" onclick="resetHome()">होम</a>
-            <a href="#" onclick="quickSearch('जबलपुर आज की ताजा खबर')">ताज़ा ख़बरें</a>
-            <a href="#" onclick="quickSearch('जबलपुर मंडी भाव और सब्जी रेट')">मंडी भाव</a>
-        </div>
-        <div class="header-right">
-            <!-- Google Translate विजेट -->
-            <div id="google_translate_element"></div>
-        </div>
-    </header>
-
-    <!-- मुख्य सर्च हिस्सा -->
-    <main>
-        <!-- Google स्टाइल रंगीन लोगो -->
-        <div class="logo">
-            <span class="c-blue">J</span><span class="c-red">a</span><span class="c-yellow">b</span><span class="c-blue">a</span><span class="c-green">l</span><span class="c-red">p</span><span class="c-yellow">u</span><span class="c-blue">r</span>
-        </div>
-        <div class="sub-logo">संस्कारधानी का स्मार्ट सर्च इंजन और टूरिस्ट गाइड</div>
-
-        <!-- सर्च बार (लिखकर, बोलकर और फोटो से) -->
-        <div class="search-wrapper">
-            <div class="search-box">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" placeholder="जबलपुर या दुनिया का कोई भी सवाल पूछें..." onkeypress="handleKeyPress(event)">
-                
-                <!-- 1. बोलकर सर्च करने का माइक आइकॉन -->
-                <button class="icon-btn mic-icon" id="micBtn" onclick="startVoiceSearch()" title="बोलकर खोजें">
-                    <i class="fas fa-microphone"></i>
-                </button>
-
-                <!-- 2. फोटो अपलोड करने का कैमरा आइकॉन -->
-                <button class="icon-btn cam-icon" onclick="document.getElementById('imageInput').click()" title="फोटो से खोजें">
-                    <i class="fas fa-camera"></i>
-                </button>
-                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-
-                <!-- 3. सर्च करने का बटन -->
-                <button class="icon-btn search-icon" onclick="performSearch()" title="सर्च करें">
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- जबलपुर की प्रमुख श्रेणियां (एक क्लिक में जानकारी) -->
-        <div class="quick-chips">
-            <div class="chip" onclick="quickSearch('घूमने की बेस्ट जगहें')"><i class="fas fa-map-marked-alt" style="color:#EA4335;"></i> घूमने की जगहें</div>
-            <div class="chip" onclick="quickSearch('जबलपुर के बेस्ट होटल')"><i class="fas fa-hotel" style="color:#4285F4;"></i> बेस्ट होटल</div>
-            <div class="chip" onclick="quickSearch('फेमस खाना और स्ट्रीट फूड')"><i class="fas fa-utensils" style="color:#FBBC05;"></i> फेमस फूड</div>
-            <div class="chip" onclick="quickSearch('प्रसिद्ध मंदिर')"><i class="fas fa-om" style="color:#FF6D00;"></i> प्रसिद्ध मंदिर</div>
-            <div class="chip" onclick="quickSearch('बेस्ट कॉलेज और स्कूल')"><i class="fas fa-graduation-cap" style="color:#34A853;"></i> स्कूल और कॉलेज</div>
-            <div class="chip" onclick="quickSearch('बेस्ट डॉक्टर और अस्पताल')"><i class="fas fa-hospital" style="color:#EA4335;"></i> डॉक्टर और अस्पताल</div>
-<!DOCTYPE html>
 <html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Jabalpur AI - Jabalpur Ka Google</title>
-<style>body{margin:0;font-family:Arial;text-align:center;background:#fff}.logo{font-size:46px;font-weight:800;margin:28px 0 5px}.logo b:nth-child(1){color:#4285F4}.logo b:nth-child(2){color:#EA4335}.logo b:nth-child(3){color:#FBBC05}.logo b:nth-child(4){color:#4285F4}.logo b:nth-child(5){color:#34A853}.logo b:nth-child(6){color:#EA4335}.logo b:nth-child(7){color:#FBBC05}.logo b:nth-child(8){color:#4285F4}.logo b:nth-child(9){color:#34A853}.sub{color:#666;font-size:14px}.box{max-width:600px;margin:18px auto;border:1px solid #ddd;border-radius:999px;display:flex;padding:11px 14px;box-shadow:0 2px 8px #ddd}.box input{flex:1;border:0;outline:none;font-size:16px}.big{background:#1a73e8;color:#fff;border:0;padding:13px 32px;border-radius:999px;font-size:17px;margin:10px;cursor:pointer}.chip{border:1px solid #ddd;background:#fff;padding:8px 12px;border-radius:999px;margin:4px;cursor:pointer}#out{max-width:650px;margin:20px auto;text-align:left;padding:0 14px}.card{border:1px solid #eee;border-radius:14px;padding:14px;margin:12px 0;line-height:1.6}</style></head><body>
-<div class="logo"><b>J</b><b>a</b><b>b</b><b>a</b><b>l</b><b>p</b><b>u</b><b>r</b><b>AI</b></div>
-<div class="sub">Jabalpur Ka Google • Kuch bhi pucho!</div>
-<div style="max-width:600px;margin:auto;padding:0 14px"><div class="box">🔍 <input id="q" placeholder="Jaise: Best food Jabalpur"></div>
-<button class="big" onclick="send()">🔍 SEARCH DABAO</button><br>
-<button onclick="voice()" style="padding:10px 16px;border-radius:999px;border:1px solid #ddd;background:#fff">🎤 Bol Ke Pucho</button></div>
-<div><button class="chip" onclick="ask('Bhedaghat')">🏞️ Bhedaghat</button><button class="chip" onclick="ask('Best food Jabalpur')">🍲 Food</button><button class="chip" onclick="ask('Best hotel Jabalpur')">🏨 Hotel</button><button class="chip" onclick="ask('Mandi bhav')">🌾 Mandi Bhav</button><button class="chip" onclick="ask('Taj Mahal')">🌍 Taj Mahal</button></div>
-<div id="out"><div class="card">🙏 <b>Namaste!</b><br>Upar likho aur <b>SEARCH DABAO</b> wale neele button ko dabao.<br>Try karo: <b>Best food Jabalpur</b> likh ke SEARCH dabao.</div></div>
+<title>JabalpurAI - Jabalpur Ka Google</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>*{box-sizing:border-box}body{margin:0;font-family:Arial;display:flex;flex-direction:column;min-height:100vh;background:#fff}header{display:flex;justify-content:space-between;padding:12px 20px;font-size:14px}header a{text-decoration:none;color:#202124;margin-right:15px;font-weight:500}main{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 20px}.logo{font-size:56px;font-weight:700;letter-spacing:-2px;margin-top:25px;text-align:center}.c-blue{color:#4285F4}.c-red{color:#EA4335}.c-yellow{color:#FBBC05}.c-green{color:#34A853}.sub-logo{font-size:13px;color:#5f6368;letter-spacing:1px;margin:5px 0 25px;font-weight:500;text-align:center}.search-wrapper{width:100%;max-width:620px}.search-box{display:flex;align-items:center;width:100%;height:50px;border:1px solid #dfe1e5;border-radius:25px;padding:0 15px;box-shadow:0 1px 6px rgba(32,33,36,.12);background:#fff}.search-box input{flex:1;border:0;outline:none;font-size:16px;padding:0 10px}.icon-btn{background:none;border:0;cursor:pointer;font-size:19px;padding:8px;border-radius:50%}.big{background:#1a73e8;color:#fff;border:0;padding:13px 32px;border-radius:999px;font-size:17px;margin-top:18px;cursor:pointer}.quick-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:720px;margin-top:22px}.chip{background:#f8f9fa;border:1px solid #dadce0;border-radius:20px;padding:8px 16px;font-size:13.5px;color:#3c4043;cursor:pointer;display:flex;gap:6px;align-items:center}#results{width:100%;max-width:720px;margin-top:25px;display:flex;flex-direction:column;gap:14px}.card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:16px;line-height:1.6}.card h3{color:#1a0dab;margin:0 0 8px}.map-btn{display:inline-block;background:#e8f0fe;color:#1967d2;text-decoration:none;padding:7px 14px;border-radius:18px;font-size:13px;font-weight:600;margin-top:8px}footer{background:#f2f2f2;color:#70757a;padding:12px;text-align:center;font-size:13px;margin-top:30px}</style></head><body>
+<header><div><a href="#" onclick="resetHome()">होम</a><a href="#" onclick="quickSearch('जबलपुर आज की ताजा खबर')">ताज़ा ख़बरें</a><a href="#" onclick="quickSearch('जबलपुर मंडी भाव')">मंडी भाव</a></div><div id="google_translate_element"></div></header>
+<main>
+<div class="logo"><span class="c-blue">J</span><span class="c-red">a</span><span class="c-yellow">b</span><span class="c-blue">a</span><span class="c-green">l</span><span class="c-red">p</span><span class="c-yellow">u</span><span class="c-blue">r</span><span class="c-green">A</span><span class="c-red">I</span></div>
+<div class="sub-logo">संस्कारधानी का स्मार्ट सर्च इंजन और टूरिस्ट गाइड</div>
+<div class="search-wrapper"><div class="search-box"><i class="fas fa-search" style="color:#5f6368"></i><input id="searchInput" placeholder="जबलपुर या दुनिया का कोई भी सवाल पूछें..." onkeypress="if(event.key==='Enter')performSearch()"><button class="icon-btn" onclick="startVoiceSearch()" title="बोलकर खोजें">🎤</button><button class="icon-btn" onclick="document.getElementById('imageInput').click()" title="फोटो से खोजें">📷</button><input type="file" id="imageInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)"></div></div>
+<button class="big" onclick="performSearch()">🔍 SEARCH DABAO</button>
+<div class="quick-chips">
+<div class="chip" onclick="quickSearch('घूमने की बेस्ट जगहें')">📍 घूमने की जगहें</div>
+<div class="chip" onclick="quickSearch('जबलपुर के बेस्ट होटल')">🏨 बेस्ट होटल</div>
+<div class="chip" onclick="quickSearch('फेमस खाना')">🍲 फेमस फूड</div>
+<div class="chip" onclick="quickSearch('प्रसिद्ध मंदिर')">🛕 प्रसिद्ध मंदिर</div>
+<div class="chip" onclick="quickSearch('बेस्ट कॉलेज और स्कूल')">🎓 स्कूल और कॉलेज</div>
+<div class="chip" onclick="quickSearch('बेस्ट डॉक्टर')">👨‍⚕️ डॉक्टर और अस्पताल</div>
+</div>
+<div id="results"><div class="card">🙏 <b>Namaste!</b><br>Upar likho aur <b>SEARCH DABAO</b> dabao, ya kisi chip pe dabao.</div></div>
+</main>
+<footer>📍 Jabalpur, Madhya Pradesh • JabalpurAI - Jabalpur Ka Google</footer>
 <script>
-const out=document.getElementById('out');
-function card(h){out.innerHTML='<div class="card">'+h+'</div>'+out.innerHTML}
-function local(q){
-if(q.includes('food')||q.includes('khana'))return "🍲 <b>Best Food Jabalpur</b><br>• Poha-Jalebi: Badkul, Wright Town<br>• Khoya Jalebi: Milon, Sadar<br>• Chaat: Fuhara, Ghamapur<br>• Dinner: Indian Coffee House, Sadar<br><br><a target='_blank' href='https://www.google.com/maps/search/best+food+Jabalpur'>📍 Maps pe Dekho ↗</a>";
-if(q.includes('bhedaghat'))return "🏞️ <b>Bhedaghat</b><br>• Jabalpur se 25 km, Bus ₹40<br>• Dhuandhar Falls + Boat Ride ₹150<br>• Subah 9 baje jao, Aarti 7 baje<br><br><a target='_blank' href='https://www.google.com/maps/search/Bhedaghat'>📍 Maps pe Dekho ↗</a>";
-if(q.includes('hotel'))return "🏨 <b>Best Hotel</b><br>• Budget: Rishi Regency ₹1200<br>• Family: Krishna, Wright Town ₹2000<br>• Luxury: Narmada Jacksons ₹5000";
-if(q.includes('mandi'))return "🌾 <b>Mandi Bhav</b><br>• Gehu ₹2600, Chana ₹5400, Soya ₹4800<br>• Jabalpur Mandi, Damoh Naka - Subah 10 baje";
+function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'hi'},'google_translate_element')}
+function resetHome(){document.getElementById('results').innerHTML='<div class="card">🙏 <b>Namaste!</b><br>Upar likho aur SEARCH DABAO dabao.</div>';document.getElementById('searchInput').value=''}
+function quickSearch(t){document.getElementById('searchInput').value=t;performSearch()}
+function getLocal(q){
+if(q.includes('खाना')||q.includes('food'))return "<h3>🍲 Best Food Jabalpur</h3><p>• Poha-Jalebi: Badkul, Wright Town<br>• Khoya Jalebi: Milon, Sadar<br>• Chaat: Fuhara, Ghamapur</p><a class='map-btn' target='_blank' href='https://www.google.com/maps/search/best+food+Jabalpur'>📍 Maps pe Dekho ↗</a>";
+if(q.includes('घूमने')||q.includes('bhedaghat'))return "<h3>🏞️ Bhedaghat</h3><p>• Jabalpur se 25 km, Bus ₹40<br>• Dhuandhar Falls + Boat Ride ₹150<br>• Subah 9 baje jao</p><a class='map-btn' target='_blank' href='https://www.google.com/maps/search/Bhedaghat'>📍 Maps pe Dekho ↗</a>";
+if(q.includes('होटल')||q.includes('hotel'))return "<h3>🏨 Best Hotel</h3><p>• Budget: Rishi Regency ₹1200<br>• Family: Krishna ₹2000<br>• Luxury: Narmada Jacksons ₹5000</p>";
+if(q.includes('मंदिर')||q.includes('mandir'))return "<h3>🛕 Prasiddh Mandir</h3><p>• Chausath Yogini, Bhedaghat<br>• Gwarighat Narmada Mandir<br>• Madan Mahal Shiv Mandir</p>";
+if(q.includes('कॉलेज')||q.includes('स्कूल')||q.includes('school'))return "<h3>🎓 School-College</h3><p>• Christ Church, St Aloysius<br>• JEC, RDVV, Govt Science College</p>";
+if(q.includes('डॉक्टर')||q.includes('doctor'))return "<h3>👨‍⚕️ Doctor</h3><p>• Netaji Subhash Medical College<br>• City Hospital, Wright Town<br>• Emergency: 108</p>";
+if(q.includes('मंडी')||q.includes('mandi'))return "<h3>🌾 Mandi Bhav</h3><p>• Gehu ₹2600, Chana ₹5400, Soya ₹4800<br>• Jabalpur Mandi, Damoh Naka</p>";
+if(q.includes('खबर')||q.includes('khabar'))return "<h3>📰 Taza Khabar</h3><p>Jabalpur ki taza khabar ke liye neeche dabao.</p><a class='map-btn' target='_blank' href='https://www.google.com/search?q=Jabalpur+news+today'>📰 News Dekho ↗</a>";
 return null;
 }
-async function send(){
-let v=document.getElementById('q').value.trim();if(!v){alert('Pehle kuch likho!');return}
-card("🔍 <b>Tumne pucha:</b> "+v+"<br>Soch rahi hu...");
-let l=local(v.toLowerCase());if(l){card(l);return}
-try{let r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(v));let d=await r.json();if(d.extract){card("🌍 <b>"+d.title+"</b><br>"+d.extract+"<br><a target='_blank' href='https://www.google.com/search?q="+encodeURIComponent(v)+"'>Google pe aur dekho ↗</a>");return}}catch(e){}
-card("😊 <b>"+v+"</b> ka jawab:<br><a target='_blank' href='https://www.google.com/search?q="+encodeURIComponent(v)+"'>🔍 Google pe dekho ↗</a> | <a target='_blank' href='https://www.google.com/maps/search/"+encodeURIComponent(v)+"'>📍 Maps pe dekho ↗</a>");
+async function performSearch(){
+let v=document.getElementById('searchInput').value.trim();if(!v){alert('Pehle kuch likho!');return}
+let box=document.getElementById('results');box.innerHTML='<div class="card">🔍 <b>'+v+'</b> soch rahi hu...</div>';
+let l=getLocal(v.toLowerCase());if(l){box.innerHTML='<div class="card">'+l+'</div>';return}
+try{let r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(v));let d=await r.json();if(d.extract){box.innerHTML='<div class="card"><h3>'+d.title+'</h3><p>'+d.extract+'</p><a class="map-btn" target="_blank" href="https://www.google.com/search?q='+encodeURIComponent(v)+'">Google pe aur dekho ↗</a></div>';return}}catch(e){}
+box.innerHTML='<div class="card"><h3>'+v+'</h3><p>Iska jawab Google pe dekho:</p><a class="map-btn" target="_blank" href="https://www.google.com/search?q='+encodeURIComponent(v)+'">🔍 Google pe Dekho ↗</a> <a class="map-btn" target="_blank" href="https://www.google.com/maps/search/'+encodeURIComponent(v)+'">📍 Maps pe Dekho ↗</a></div>';
 }
-function ask(t){document.getElementById('q').value=t;send()}
-function voice(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Voice nahi chal raha, likh ke pucho');return}let r=new SR();r.lang='hi-IN';r.onresult=e=>{document.getElementById('q').value=e.results[0][0].transcript;send()};r.start()}
-</script></body></html>
+function startVoiceSearch(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Voice nahi chal raha, likh ke pucho');return}let r=new SR();r.lang='hi-IN';r.onresult=e=>{document.getElementById('searchInput').value=e.results[0][0].transcript;performSearch()};r.start()}
+function handleImageUpload(e){let f=e.target.files[0];if(!f)return;let url=URL.createObjectURL(f);document.getElementById('results').innerHTML='<div class="card"><img src="'+url+'" style="max-width:180px;border-radius:10px"><h3>📷 Photo mil gayi!</h3><p>Is photo jaisi cheez Jabalpur me kaha milegi, ye search karo.</p><a class="map-btn" target="_blank" href="https://lens.google.com/">🔍 Google Lens pe Dekho ↗</a></div>'}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body></html>
