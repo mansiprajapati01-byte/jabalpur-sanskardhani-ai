@@ -63,3 +63,22 @@ function runAgent(){
 
   if(q.includes("bhedaghat")){
     plan = "🤖 AGENT PLAN - Bhedaghat 1 Day Trip:\n\nSTEP 1: Subah 8 baje - Dhuandhar Falls jao, sabse pehle wahi jao bheed se pehle\nSTEP 2: 10 baje - Marble Rocks me Boating karo - Rs 100/person\nSTEP 3: 1 baje - Lunch - Indian Coffee House, Sadar - Rs 200\nSTEP 4: 4 baje - Ch
+<script>
+window.runAgent = function(){
+  var q = document.getElementById('agent-input').value.toLowerCase();
+  var out = document.getElementById('agent-output');
+  if(!q){ out.innerText = "Pehle kuch likho!"; return; }
+  if(q.includes("bhedaghat") || q.includes("plan") || q.includes("10 din")){
+    out.innerText = "🤖 AGENT PLAN - Jabalpur:\n\nDAY 1: Bhedaghat - Dhuandhar + Boating\nDAY 2: Madan Mahal + Balancing Rock\nDAY 3: Dumna Park + Sadar Market\nDAY 4-10: Bargi Dam, Gwarighat, Tilwara Ghat\n\nBudget: ~Rs 5000";
+  } else if(q.includes("hotel")){
+    out.innerText = "🤖 Best Hotel: Hotel Samrat - Rs 900/night, Station ke paas!";
+  } else {
+    out.innerText = "🤖 Samajh gaya: " + q + "\nMain tumhare liye plan bana raha hu...";
+  }
+};
+// Button ko zabardasti chalao
+setTimeout(function(){
+  var btn = document.querySelector('button[onclick*="runAgent"]');
+  if(btn){ btn.onclick = window.runAgent; }
+}, 500);
+</script>
