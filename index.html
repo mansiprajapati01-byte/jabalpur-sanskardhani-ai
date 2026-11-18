@@ -292,3 +292,34 @@
             <div class="chip" onclick="quickSearch('प्रसिद्ध मंदिर')"><i class="fas fa-om" style="color:#FF6D00;"></i> प्रसिद्ध मंदिर</div>
             <div class="chip" onclick="quickSearch('बेस्ट कॉलेज और स्कूल')"><i class="fas fa-graduation-cap" style="color:#34A853;"></i> स्कूल और कॉलेज</div>
             <div class="chip" onclick="quickSearch('बेस्ट डॉक्टर और अस्पताल')"><i class="fas fa-hospital" style="color:#EA4335;"></i> डॉक्टर और अस्पताल</div>
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jabalpur AI - Jabalpur Ka Google</title>
+<style>body{margin:0;font-family:Arial;text-align:center;background:#fff}.logo{font-size:46px;font-weight:800;margin:28px 0 5px}.logo b:nth-child(1){color:#4285F4}.logo b:nth-child(2){color:#EA4335}.logo b:nth-child(3){color:#FBBC05}.logo b:nth-child(4){color:#4285F4}.logo b:nth-child(5){color:#34A853}.logo b:nth-child(6){color:#EA4335}.logo b:nth-child(7){color:#FBBC05}.logo b:nth-child(8){color:#4285F4}.logo b:nth-child(9){color:#34A853}.sub{color:#666;font-size:14px}.box{max-width:600px;margin:18px auto;border:1px solid #ddd;border-radius:999px;display:flex;padding:11px 14px;box-shadow:0 2px 8px #ddd}.box input{flex:1;border:0;outline:none;font-size:16px}.big{background:#1a73e8;color:#fff;border:0;padding:13px 32px;border-radius:999px;font-size:17px;margin:10px;cursor:pointer}.chip{border:1px solid #ddd;background:#fff;padding:8px 12px;border-radius:999px;margin:4px;cursor:pointer}#out{max-width:650px;margin:20px auto;text-align:left;padding:0 14px}.card{border:1px solid #eee;border-radius:14px;padding:14px;margin:12px 0;line-height:1.6}</style></head><body>
+<div class="logo"><b>J</b><b>a</b><b>b</b><b>a</b><b>l</b><b>p</b><b>u</b><b>r</b><b>AI</b></div>
+<div class="sub">Jabalpur Ka Google • Kuch bhi pucho!</div>
+<div style="max-width:600px;margin:auto;padding:0 14px"><div class="box">🔍 <input id="q" placeholder="Jaise: Best food Jabalpur"></div>
+<button class="big" onclick="send()">🔍 SEARCH DABAO</button><br>
+<button onclick="voice()" style="padding:10px 16px;border-radius:999px;border:1px solid #ddd;background:#fff">🎤 Bol Ke Pucho</button></div>
+<div><button class="chip" onclick="ask('Bhedaghat')">🏞️ Bhedaghat</button><button class="chip" onclick="ask('Best food Jabalpur')">🍲 Food</button><button class="chip" onclick="ask('Best hotel Jabalpur')">🏨 Hotel</button><button class="chip" onclick="ask('Mandi bhav')">🌾 Mandi Bhav</button><button class="chip" onclick="ask('Taj Mahal')">🌍 Taj Mahal</button></div>
+<div id="out"><div class="card">🙏 <b>Namaste!</b><br>Upar likho aur <b>SEARCH DABAO</b> wale neele button ko dabao.<br>Try karo: <b>Best food Jabalpur</b> likh ke SEARCH dabao.</div></div>
+<script>
+const out=document.getElementById('out');
+function card(h){out.innerHTML='<div class="card">'+h+'</div>'+out.innerHTML}
+function local(q){
+if(q.includes('food')||q.includes('khana'))return "🍲 <b>Best Food Jabalpur</b><br>• Poha-Jalebi: Badkul, Wright Town<br>• Khoya Jalebi: Milon, Sadar<br>• Chaat: Fuhara, Ghamapur<br>• Dinner: Indian Coffee House, Sadar<br><br><a target='_blank' href='https://www.google.com/maps/search/best+food+Jabalpur'>📍 Maps pe Dekho ↗</a>";
+if(q.includes('bhedaghat'))return "🏞️ <b>Bhedaghat</b><br>• Jabalpur se 25 km, Bus ₹40<br>• Dhuandhar Falls + Boat Ride ₹150<br>• Subah 9 baje jao, Aarti 7 baje<br><br><a target='_blank' href='https://www.google.com/maps/search/Bhedaghat'>📍 Maps pe Dekho ↗</a>";
+if(q.includes('hotel'))return "🏨 <b>Best Hotel</b><br>• Budget: Rishi Regency ₹1200<br>• Family: Krishna, Wright Town ₹2000<br>• Luxury: Narmada Jacksons ₹5000";
+if(q.includes('mandi'))return "🌾 <b>Mandi Bhav</b><br>• Gehu ₹2600, Chana ₹5400, Soya ₹4800<br>• Jabalpur Mandi, Damoh Naka - Subah 10 baje";
+return null;
+}
+async function send(){
+let v=document.getElementById('q').value.trim();if(!v){alert('Pehle kuch likho!');return}
+card("🔍 <b>Tumne pucha:</b> "+v+"<br>Soch rahi hu...");
+let l=local(v.toLowerCase());if(l){card(l);return}
+try{let r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(v));let d=await r.json();if(d.extract){card("🌍 <b>"+d.title+"</b><br>"+d.extract+"<br><a target='_blank' href='https://www.google.com/search?q="+encodeURIComponent(v)+"'>Google pe aur dekho ↗</a>");return}}catch(e){}
+card("😊 <b>"+v+"</b> ka jawab:<br><a target='_blank' href='https://www.google.com/search?q="+encodeURIComponent(v)+"'>🔍 Google pe dekho ↗</a> | <a target='_blank' href='https://www.google.com/maps/search/"+encodeURIComponent(v)+"'>📍 Maps pe dekho ↗</a>");
+}
+function ask(t){document.getElementById('q').value=t;send()}
+function voice(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Voice nahi chal raha, likh ke pucho');return}let r=new SR();r.lang='hi-IN';r.onresult=e=>{document.getElementById('q').value=e.results[0][0].transcript;send()};r.start()}
+</script></body></html>
