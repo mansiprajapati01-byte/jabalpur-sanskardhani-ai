@@ -56,49 +56,78 @@ function handleImageUpload(e){let f=e.target.files[0];if(!f)return;let url=URL.c
 </div>
 
 <script>
-var btn = document.getElementById('agentBtn');
-var input = document.getElementById('agent-input');
-var out = document.getElementById('agent-output');
-
-function runAgent(){
-  var raw = input.value.trim();
+var allDays = [
+ "Dhuandhar Falls + Boat ₹150 + Chausath Yogini Mandir",
+ "Madan Mahal Fort + Gwarighat Narmada Aarti Shaam 7 baje",
+ "Dumna Nature Park + Bargi Dam Sunset + Boating",
+ "Bhedaghat Marble Rocks Boat + Shopping Sadar Bazar",
+ "Pisanhari Ki Madiya + Kachnar City Shiv Mandir + Food Tour",
+ "Rani Durgavati Museum + Balancing Rock + Local Market",
+ "Rest + Famous Food - Badal Jalebi, Sadar Samosa, Gwarighat Chai"
+];
+function makeAnswer(raw){
   var q = raw.toLowerCase();
-  out.style.display = 'block';
-  if(q === ""){
-    out.innerHTML = "Pehle kuch likho! Jaise - Bhedaghat ka plan banao";
-    return;
-  }
   var googleLink = "https://www.google.com/search?q=" + encodeURIComponent(raw + " Jabalpur");
   var days = 1;
   var m = q.match(/(\d+)\s*din/);
   if(m) days = parseInt(m[1]);
-
-  if(q.includes("bhedaghat") || q.includes("dhuandhar")){
-    out.innerHTML = "<b>Bhedaghat "+days+" Din Plan:</b><br>Day 1: Dhuandhar Falls + Boat ₹150<br>Day 2: Chausath Yogini + Gwarighat Aarti<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
+  if(days < 1) days = 1;
+  if(q.includes("bhedaghat") || q.includes("dhuandhar") || q.includes("plan") || q.includes("ghum") || q.includes("trip") || q.includes("jabalpur") || q.includes("ghoom")){
+    var p = "<b>Jabalpur " + days + " Din Ka Plan:</b><br><br>";
+    for(var i=0;i<days;i++){
+      var work = allDays[i % allDays.length];
+      if(i >= 7) work = work + " (Dobara ghumo + Naya Photo Point)";
+      p += "Day " + (i+1) + ": " + work + "<br>";
+    }
+    p += "<br>Total Kharcha: ₹" + (days*800) + "<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
+    return p;
   }
-  else if(q.includes("hotel") || q.includes("room") || q.includes("sasta") || q.includes("ruk")){
-    out.innerHTML = "<b>Saste Hotel:</b><br>1. Hotel Samrat - ₹800<br>2. OYO Bus Stand - ₹600<br>3. Hotel Rishi - ₹1000<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur hotel dekho -></a>";
+  if(q.includes("hotel") || q.includes("room") || q.includes("sasta") || q.includes("ruk")){
+    return "<b>Saste Hotel:</b><br>1. Hotel Samrat - ₹800<br>2. OYO Bus Stand - ₹600<br>3. Hotel Rishi - ₹1000<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur hotel dekho -></a>";
   }
-  else if(q.includes("mandir")){
-    out.innerHTML = "<b>Mandir Jabalpur:</b><br>1. Chausath Yogini<br>2. Gwarighat Mandir<br>3. Madan Mahal Mandir<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur mandir dekho -></a>";
+  if(q.includes("mandir")){
+    return "<b>Mandir:</b><br>1. Chausath Yogini<br>2. Gwarighat Mandir<br>3. Madan Mahal Mandir<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur mandir dekho -></a>";
   }
-  else if(q.includes("kha") || q.includes("food") || q.includes("jalebi")){
-    out.innerHTML = "<b>Famous Food:</b><br>1. Badal Sweets Jalebi<br>2. Sadar Samosa<br>3. Gwarighat Chai<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur food dekho -></a>";
+  if(q.includes("kha") || q.includes("food") || q.includes("jalebi")){
+    return "<b>Famous Food:</b><br>1. Badal Sweets Jalebi<br>2. Sadar Samosa<br>3. Gwarighat Chai<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur food dekho -></a>";
   }
-  else if(q.includes("school") || q.includes("college")){
-    out.innerHTML = "<b>School College:</b><br>1. St. Aloysius<br>2. Rani Durgavati University<br>3. JEC Jabalpur<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
+  if(q.includes("school") || q.includes("college")){
+    return "<b>School College:</b><br>1. St. Aloysius<br>2. Rani Durgavati University<br>3. JEC Jabalpur<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
   }
-  else if(q.includes("doctor") || q.includes("hospital")){
-    out.innerHTML = "<b>Hospital:</b><br>1. Medical College<br>2. Victoria Hospital<br>3. Galaxy Hospital<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
+  if(q.includes("doctor") || q.includes("hospital")){
+    return "<b>Hospital:</b><br>1. Medical College<br>2. Victoria Hospital<br>3. Galaxy Hospital<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
   }
-  else if(q.includes("plan") || q.includes("jabalpur") || q.includes("ghum") || q.includes("trip")){
-    out.innerHTML = "<b>Jabalpur "+days+" Din Plan:</b><br>Day 1: Bhedaghat<br>Day 2: Madan Mahal + Gwarighat<br><br>Tune likha: " + raw;
+  return null;
+}
+function askJabalpur(text){
+  var inp = document.getElementById('jabalpur-input');
+  var out = document.getElementById('jabalpur-output');
+  var raw = text || inp.value.trim();
+  if(!raw){ out.style.display='block'; out.innerHTML="Pehle kuch likho!"; return; }
+  var ans = makeAnswer(raw);
+  out.style.display='block';
+  if(ans){ out.innerHTML = ans; }
+  else{
+    var gl = "https://www.google.com/search?q=" + encodeURIComponent(raw + " Jabalpur");
+    out.innerHTML = "<b>Google se la rahi hu!</b><br><br>Tune pucha: " + raw + "<br><br><a href='"+gl+"' target='_blank'>👉 Google pe jawab dekho</a>";
+    window.open(gl,'_blank');
   }
-  else {
-    out.innerHTML = "<b>Mujhe ye pura nahi pata, main Google se la deti hu!</b><br><br>Tune pucha: " + raw + "<br><br><a href='"+googleLink+"' target='_blank'>👉 Google pe jawab dekho</a>";
-    window.open(googleLink, '_blank');
+}
+var btn = document.getElementById('agentBtn');
+var input = document.getElementById('agent-input');
+var out2 = document.getElementById('agent-output');
+function runAgent(){
+  var raw = input.value.trim();
+  if(!raw){ out2.style.display='block'; out2.innerHTML="Pehle kuch likho! Jaise - 5 din ka plan banao"; return; }
+  var ans = makeAnswer(raw);
+  out2.style.display='block';
+  if(ans){ out2.innerHTML = ans; }
+  else{
+    var gl = "https://www.google.com/search?q=" + encodeURIComponent(raw + " Jabalpur");
+    out2.innerHTML = "<b>Mujhe ye pura nahi pata, main Google se la deti hu!</b><br><br>Tune pucha: " + raw + "<br><br><a href='"+gl+"' target='_blank'>👉 Google pe jawab dekho</a>";
+    window.open(gl,'_blank');
   }
 }
 btn.onclick = runAgent;
-input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ runAgent(); } });
+input.addEventListener('keydown', function(e){ if(e.key==='Enter'){ runAgent(); } });
 </script>
