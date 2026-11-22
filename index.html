@@ -56,29 +56,49 @@ function handleImageUpload(e){let f=e.target.files[0];if(!f)return;let url=URL.c
 </div>
 
 <script>
-function runAgent(){
-  let q = document.getElementById('agent-input').value.toLowerCase();
-  let out = document.getElementById('agent-output');
-  let plan = "";
+var btn = document.getElementById('agentBtn');
+var input = document.getElementById('agent-input');
+var out = document.getElementById('agent-output');
 
-  if(q.includes("bhedaghat")){
-   plan = "🤖 AGENT PLAN - Bhedaghat 1 Day Trip:\n\nSTEP 1: Subah 8 baje - Dhuandhar Falls jao, sabse pehle wahi jao bheed se pehle\nSTEP 2: 10 baje - Marble Rocks me Boating karo - Rs 100/person\nSTEP 3: 1 baje - Lunch - Indian Coffee House, Sadar - Rs 200\nSTEP 4: 4 baje - Ch
-<script>
-window.runAgent = function(){
-  var q = document.getElementById('agent-input').value.toLowerCase();
-  var out = document.getElementById('agent-output');
-  if(!q){ out.innerText = "Pehle kuch likho!"; return; }
-  if(q.includes("bhedaghat") || q.includes("plan") || q.includes("10 din")){
-    out.innerText = "🤖 AGENT PLAN - Jabalpur:\n\nDAY 1: Bhedaghat - Dhuandhar + Boating\nDAY 2: Madan Mahal + Balancing Rock\nDAY 3: Dumna Park + Sadar Market\nDAY 4-10: Bargi Dam, Gwarighat, Tilwara Ghat\n\nBudget: ~Rs 5000";
-  } else if(q.includes("hotel")){
-    out.innerText = "🤖 Best Hotel: Hotel Samrat - Rs 900/night, Station ke paas!";
-  } else {
-    out.innerText = "🤖 Samajh gaya: " + q + "\nMain tumhare liye plan bana raha hu...";
+function runAgent(){
+  var raw = input.value.trim();
+  var q = raw.toLowerCase();
+  out.style.display = 'block';
+  if(q === ""){
+    out.innerHTML = "Pehle kuch likho! Jaise - Bhedaghat ka plan banao";
+    return;
   }
-};
-// Button ko zabardasti chalao
-setTimeout(function(){
-  var btn = document.querySelector('button[onclick*="runAgent"]');
-  if(btn){ btn.onclick = window.runAgent; }
-}, 500);
+  var googleLink = "https://www.google.com/search?q=" + encodeURIComponent(raw + " Jabalpur");
+  var days = 1;
+  var m = q.match(/(\d+)\s*din/);
+  if(m) days = parseInt(m[1]);
+
+  if(q.includes("bhedaghat") || q.includes("dhuandhar")){
+    out.innerHTML = "<b>Bhedaghat "+days+" Din Plan:</b><br>Day 1: Dhuandhar Falls + Boat ₹150<br>Day 2: Chausath Yogini + Gwarighat Aarti<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
+  }
+  else if(q.includes("hotel") || q.includes("room") || q.includes("sasta") || q.includes("ruk")){
+    out.innerHTML = "<b>Saste Hotel:</b><br>1. Hotel Samrat - ₹800<br>2. OYO Bus Stand - ₹600<br>3. Hotel Rishi - ₹1000<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur hotel dekho -></a>";
+  }
+  else if(q.includes("mandir")){
+    out.innerHTML = "<b>Mandir Jabalpur:</b><br>1. Chausath Yogini<br>2. Gwarighat Mandir<br>3. Madan Mahal Mandir<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur mandir dekho -></a>";
+  }
+  else if(q.includes("kha") || q.includes("food") || q.includes("jalebi")){
+    out.innerHTML = "<b>Famous Food:</b><br>1. Badal Sweets Jalebi<br>2. Sadar Samosa<br>3. Gwarighat Chai<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur food dekho -></a>";
+  }
+  else if(q.includes("school") || q.includes("college")){
+    out.innerHTML = "<b>School College:</b><br>1. St. Aloysius<br>2. Rani Durgavati University<br>3. JEC Jabalpur<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
+  }
+  else if(q.includes("doctor") || q.includes("hospital")){
+    out.innerHTML = "<b>Hospital:</b><br>1. Medical College<br>2. Victoria Hospital<br>3. Galaxy Hospital<br><br><a href='"+googleLink+"' target='_blank'>Google pe aur dekho -></a>";
+  }
+  else if(q.includes("plan") || q.includes("jabalpur") || q.includes("ghum") || q.includes("trip")){
+    out.innerHTML = "<b>Jabalpur "+days+" Din Plan:</b><br>Day 1: Bhedaghat<br>Day 2: Madan Mahal + Gwarighat<br><br>Tune likha: " + raw;
+  }
+  else {
+    out.innerHTML = "<b>Mujhe ye pura nahi pata, main Google se la deti hu!</b><br><br>Tune pucha: " + raw + "<br><br><a href='"+googleLink+"' target='_blank'>👉 Google pe jawab dekho</a>";
+    window.open(googleLink, '_blank');
+  }
+}
+btn.onclick = runAgent;
+input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ runAgent(); } });
 </script>
